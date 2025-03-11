@@ -1,8 +1,11 @@
 package com.plcoding.bookpedia.book.presentation.book_list.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,6 +50,8 @@ fun BookSearchBar(
             backgroundColor = Color(0xff9a60f9),
         )
     ) {
+        val topNavigationBars = WindowInsets.navigationBars.asPaddingValues()
+
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { onSearchQueryChanged(it) },
@@ -83,7 +88,7 @@ fun BookSearchBar(
             },
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(4.dp)
                 .minimumInteractiveComponentSize(),
             keyboardActions = KeyboardActions(onSearch = {
                 onImeSearchAction()
@@ -98,7 +103,8 @@ fun BookSearchBar(
                     IconButton(
                         onClick = { onSearchQueryChanged("") },
 
-                        ) {
+                        )
+                    {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = null,
@@ -106,7 +112,7 @@ fun BookSearchBar(
                             modifier = Modifier
                                 .width(40.dp)
                                 .height(40.dp)
-                                .padding(end = 8.dp)
+                                .padding(topNavigationBars)
                         )
                     }
                 }
