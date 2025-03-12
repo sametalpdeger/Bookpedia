@@ -1,6 +1,6 @@
 package com.plcoding.bookpedia.book.presentation.book_list
 
-import com.plcoding.bookpedia.book.data.Book
+import com.plcoding.bookpedia.book.domain.Book
 
 sealed interface BookListAction {
     data class onSearchQueryChanged(val query: String): BookListAction

@@ -17,18 +17,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.plcoding.bookpedia.book.data.network.KtorRemoteBookDataSource
+import com.plcoding.bookpedia.book.data.repository.DefaultBookRepository
 import com.plcoding.bookpedia.book.presentation.book_list.BookListScreenRoot
 import com.plcoding.bookpedia.book.presentation.book_list.BookListViewModel
+import com.plcoding.bookpedia.core.data.HttpClientFactory
 import com.plcoding.bookpedia.core.presentation.AppTheme
 import com.plcoding.bookpedia.core.presentation.OutfitFontFamily
 import com.plcoding.bookpedia.core.presentation.ScreenSize
 import com.plcoding.bookpedia.core.presentation.observeScreenSize
+import io.ktor.client.engine.HttpClientEngine
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @Composable
 @Preview
-fun App() {
+fun App(engine: HttpClientEngine) {
     AppTheme {
         Layout(
             content = {
@@ -58,7 +62,17 @@ fun App() {
                     )
 
                     BookListScreenRoot(
-                        viewModel = remember { BookListViewModel() },
+                        viewModel = remember {
+                            BookListViewModel(
+                                datasource = DefaultBookRepository(
+                                    remoteBookDataSource = KtorRemoteBookDataSource(
+                                        httpClient = HttpClientFactory.create(
+                                            engine = engine
+                                        )
+                                    )
+                                )
+                            )
+                        },
                         onBookClick = { /*TODO*/ },
                     )
                 }

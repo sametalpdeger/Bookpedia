@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.book_error_2
 import coil3.compose.rememberAsyncImagePainter
-import com.plcoding.bookpedia.book.data.Book
+import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.core.presentation.OutfitFontFamily
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.round
@@ -60,7 +59,7 @@ fun BookListItem(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .height(80.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -107,19 +106,18 @@ fun BookListItem(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
                     .padding(start = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = book.title,
-                    fontSize = 22.sp,
+                    fontSize = 20.sp,
                     fontFamily = OutfitFontFamily(),
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
-                    modifier = Modifier.padding(bottom = 8.dp)
                 )
+
 
                 book.authors.firstOrNull()?.let { author ->
                     Text(

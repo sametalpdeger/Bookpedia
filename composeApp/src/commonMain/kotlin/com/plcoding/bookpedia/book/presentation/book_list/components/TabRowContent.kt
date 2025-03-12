@@ -10,20 +10,14 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.plcoding.bookpedia.book.presentation.book_list.BookListAction
 import com.plcoding.bookpedia.book.presentation.book_list.BookListState
 import com.plcoding.bookpedia.core.presentation.OutfitFontFamily
-import com.plcoding.bookpedia.core.presentation.Screen
-import com.plcoding.bookpedia.core.presentation.ScreenSizeName
 
 @Composable
 fun ColumnScope.TabRowContent(
@@ -47,6 +41,7 @@ fun ColumnScope.TabRowContent(
     ) {
         TabRowContentTab(
             index = 0,
+            text = "Book list",
             state = state,
             onAction = onAction,
             modifier = Modifier
@@ -55,6 +50,7 @@ fun ColumnScope.TabRowContent(
 
         TabRowContentTab(
             index = 1,
+            text = "Favorites",
             state = state,
             onAction = onAction,
             modifier = Modifier
@@ -67,30 +63,10 @@ fun ColumnScope.TabRowContent(
 fun TabRowContentTab(
     index: Int,
     state: BookListState,
+    text: String,
     onAction: (BookListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val screen = ScreenSizeName.collectAsStateWithLifecycle()
-    val textPadding by remember {
-        derivedStateOf {
-            when (screen.value) {
-                Screen.SM -> 16.dp
-                Screen.MD -> 20.dp
-                else -> 24.dp
-            }
-        }
-    }
-
-    val textSize by remember {
-        derivedStateOf {
-            when (screen.value) {
-                Screen.SM -> 18.sp
-                Screen.MD -> 20.sp
-                else -> 22.sp
-            }
-        }
-    }
-
 
     Tab(
         selected = state.selectedTabIndex == index,
@@ -100,11 +76,11 @@ fun TabRowContentTab(
         unselectedContentColor = Color(0xff8a5ede),
     ) {
         Text(
-            text = "Favorites ${screen.value}",
-            fontSize = textSize,
+            text = text,
             fontFamily = OutfitFontFamily(),
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(vertical = textPadding)
+            modifier = Modifier.padding(vertical = 12.dp)
         )
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -74,14 +75,14 @@ fun BookSearchBar(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
                     tint = Color(0x76000000),
-                    modifier = Modifier.width(40.dp).height(40.dp).padding(start = 8.dp)
+                    modifier = Modifier.size(40.dp).padding(start = 8.dp)
                 )
             },
             placeholder = {
                 Text(
                     text = stringResource(Res.string.search_hint),
                     color = Color(0x78000000),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontFamily = OutfitFontFamily(),
                     fontWeight = FontWeight.Medium,
                 )
@@ -102,16 +103,14 @@ fun BookSearchBar(
                 ) {
                     IconButton(
                         onClick = { onSearchQueryChanged("") },
-
-                        )
-                    {
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = null,
                             tint = Color(0x8c000000),
                             modifier = Modifier
-                                .width(40.dp)
-                                .height(40.dp)
+                                .width(30.dp)
+                                .height(30.dp)
                                 .padding(topNavigationBars)
                         )
                     }

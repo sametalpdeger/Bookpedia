@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.plcoding.bookpedia.book.data.Book
+import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.book.presentation.book_list.components.BookSearchBar
 import com.plcoding.bookpedia.book.presentation.book_list.components.HorizontalPagerContent
 import com.plcoding.bookpedia.book.presentation.book_list.components.TabRowContent
@@ -99,7 +99,7 @@ fun BookListScreen(
             modifier = Modifier
                 .widthIn(max = 700.dp)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(vertical = 5.dp, horizontal = 16.dp)
         )
 
         Box(
