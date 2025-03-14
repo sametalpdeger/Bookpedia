@@ -6,19 +6,18 @@ import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.contentType
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.coroutineContext
 
 suspend inline fun <reified T> safeCall(
-    execute: () -> HttpResponse
+    contentType: String? = null,
+    execute: () -> HttpResponse,
 ): Result<T, DataError.Remote> {
     val response = try {
         execute()
-    }
-    catch (e: SocketTimeoutException) {
-       return Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+    } catch (e: SocketTimeoutException) {
+        return Result.Error(DataError.Remote.REQUEST_TIMEOUT)
     } catch (e: UnresolvedAddressException) {
         return Result.Error(DataError.Remote.NO_INTERNET)
     } catch (e: Exception) {
@@ -26,10 +25,8 @@ suspend inline fun <reified T> safeCall(
         return Result.Error(DataError.Remote.UNKNOWN)
     }
 
-    val contentType = response.headers["Content-Type"]
-
-    if (contentType != "application/json") {
-        print("contentType: $contentType")
+    if (contentType != null && response.headers["Content-Type"] != contentType) {
+        println("Expected content type: $contentType but got ${response.headers["Content-Type"]} in response")
         return Result.Error(DataError.Remote.SERIALIZATION)
     }
 
