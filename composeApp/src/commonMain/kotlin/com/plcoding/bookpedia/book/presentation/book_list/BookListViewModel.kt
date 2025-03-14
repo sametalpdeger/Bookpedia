@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 // presentation -> domain <- data
 @OptIn(FlowPreview::class)
 class BookListViewModel(
-    private val datasource: BookRepository
+    private val datasource: BookRepository,
+    private val bookRepository: BookRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(BookListState())
     val state = _state
@@ -32,6 +33,7 @@ class BookListViewModel(
             if (cachedBooks.isEmpty()) {
                 observerSearchQuery()
             }
+            observeFavoriteBooks()
         }
         .stateIn(
             viewModelScope,
@@ -41,6 +43,7 @@ class BookListViewModel(
 
     private var cachedBooks: List<Book> = emptyList()
     private var searchJob: Job? = null
+    private var favoriteJob: Job? = null
 
     private fun observerSearchQuery() {
         state
@@ -65,6 +68,20 @@ class BookListViewModel(
                     }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private suspend fun observeFavoriteBooks() {
+        favoriteJob?.cancel()
+        favoriteJob = bookRepository
+            .getFavoriteBooks()
+            .onEach { books ->
+                _state.update {
+                    it.copy(
+                        favoriteBooks = books
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun searchBooks(query: String) = viewModelScope.launch {
