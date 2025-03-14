@@ -1,6 +1,8 @@
 package com.plcoding.bookpedia.book.presentation.book_list.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,26 +52,16 @@ fun ColumnScope.HorizontalPagerContent(
                     } else {
                         when {
                             state.errorMessage != null -> {
-                                Text(
-                                    text = state.errorMessage.asString(),
-                                    fontFamily = OutfitFontFamily(),
-                                    fontSize = 18.sp,
-                                    color = Color(0xffdd0452),
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(16.dp)
+                                ErrorResult(
+                                    onAction = onAction,
+                                    errorMessage = state.errorMessage.asString()
                                 )
                             }
 
                             state.searchResults.isEmpty() -> {
-                                Text(
-                                    text = "No results found",
-                                    fontFamily = OutfitFontFamily(),
-                                    fontSize = 18.sp,
-                                    color = Color(0xd2000000),
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(16.dp)
+                                ErrorResult(
+                                    onAction = onAction,
+                                    errorMessage = "No results found"
                                 )
                             }
 
@@ -88,7 +81,7 @@ fun ColumnScope.HorizontalPagerContent(
                 1 -> {
                     if (state.favoriteBooks.isEmpty()) {
                         Text(
-                            text = "No results found",
+                            text = "You haven't added any favorite book yet",
                             fontFamily = OutfitFontFamily(),
                             fontSize = 18.sp,
                             color = Color(0xd2000000),
@@ -109,5 +102,40 @@ fun ColumnScope.HorizontalPagerContent(
             }
 
         }
+    }
+}
+
+@Composable
+private fun ErrorResult(
+    onAction: (BookListAction) -> Unit,
+    errorMessage: String,
+) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = errorMessage,
+            fontFamily = OutfitFontFamily(),
+            fontSize = 18.sp,
+            color = Color(0xd2000000),
+            modifier = Modifier
+                .padding(16.dp)
+        )
+        Button(
+            onClick = {
+                onAction(BookListAction.onRefresh)
+            },
+            content = {
+                Text(
+                    text = "Try again",
+                    fontFamily = OutfitFontFamily(),
+                    fontSize = 18.sp,
+                    color = Color(0xffffffff),
+                )
+            }
+        )
     }
 }

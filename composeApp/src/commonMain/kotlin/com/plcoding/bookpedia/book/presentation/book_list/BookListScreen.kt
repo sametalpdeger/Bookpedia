@@ -49,9 +49,9 @@ fun BookListScreenRoot(
 
 
 val gradientBgColors = listOf(
-    Color(0xff904bff),
+    Color(0xffa24bff),
     Color(0xff8336ff),
-    Color(0xff904bff)
+    Color(0xffff4bc9)
 )
 
 @Composable
@@ -85,7 +85,7 @@ fun BookListScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.horizontalGradient(gradientBgColors)),
+            .background(Brush.linearGradient(gradientBgColors)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         BookSearchBar(

@@ -6,6 +6,7 @@ import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.contentType
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.coroutineContext
@@ -15,13 +16,21 @@ suspend inline fun <reified T> safeCall(
 ): Result<T, DataError.Remote> {
     val response = try {
         execute()
-    } catch (e: SocketTimeoutException) {
+    }
+    catch (e: SocketTimeoutException) {
        return Result.Error(DataError.Remote.REQUEST_TIMEOUT)
     } catch (e: UnresolvedAddressException) {
         return Result.Error(DataError.Remote.NO_INTERNET)
     } catch (e: Exception) {
         coroutineContext.ensureActive()
         return Result.Error(DataError.Remote.UNKNOWN)
+    }
+
+    val contentType = response.headers["Content-Type"]
+
+    if (contentType != "application/json") {
+        print("contentType: $contentType")
+        return Result.Error(DataError.Remote.SERIALIZATION)
     }
 
     return responseToResult(response)

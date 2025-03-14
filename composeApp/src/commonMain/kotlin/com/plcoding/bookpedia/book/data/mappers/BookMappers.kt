@@ -7,10 +7,10 @@ const val IMAGE_URL_START_URL = "https://covers.openlibrary.org/b"
 
 fun SearchedBookDTO.toBook(): Book {
     return Book(
-        id = id,
+        id = id.substringAfterLast("/"),
         title = title,
         imageUrl =
-        if (coverKey != null) "$IMAGE_URL_START_URL/ /${coverKey}-L.jpg"
+        if (coverKey != null) "$IMAGE_URL_START_URL/id/${coverKey}-L.jpg"
         else "$IMAGE_URL_START_URL/id/${coverAlternativeKey}-L.jpg",
         authors = authorNames ?: emptyList(),
         description = null,

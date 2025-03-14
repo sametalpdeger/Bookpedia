@@ -9,7 +9,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import com.plcoding.bookpedia.core.domain.Result
 
-private const val BASE_URL = "https://openlibrary.org"
+private const val BASE_URL = "https://openlibrary.org/search.json"
 
 class KtorRemoteBookDataSource(
     private val httpClient: HttpClient
@@ -20,7 +20,7 @@ class KtorRemoteBookDataSource(
     ): Result<SearchResponseDTO, DataError.Remote> {
         return safeCall {
             httpClient.get(
-                urlString = "$BASE_URL/search.json"
+                urlString = BASE_URL
             ) {
                 parameter("q", query)
                 parameter("limit",resultLimit)
