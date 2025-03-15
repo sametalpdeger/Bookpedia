@@ -24,8 +24,7 @@ import kotlinx.coroutines.launch
 // presentation -> domain <- data
 @OptIn(FlowPreview::class)
 class BookListViewModel(
-    private val datasource: BookRepository,
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(BookListState())
     val state = _state
@@ -91,7 +90,7 @@ class BookListViewModel(
             )
         }
 
-        datasource
+        bookRepository
             .searchBooks(query)
             .onSuccess { books ->
                 _state.update {

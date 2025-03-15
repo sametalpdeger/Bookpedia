@@ -42,13 +42,17 @@ fun ColumnScope.HorizontalPagerContent(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
-
         ) {
             when (pageIndex) {
                 0 -> {
                     if (state.isLoading) {
-                        CircularProgressIndicator()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     } else {
                         when {
                             state.errorMessage != null -> {
