@@ -51,9 +51,7 @@ fun BookListItem(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
             .clickable(onClick = onClick)
-            .background(Color(0xffd0b3fe))
     ) {
         Row(
             modifier = Modifier
@@ -135,8 +133,8 @@ fun BookListItem(
                     ) {
                         Text(
                             text = "${round(rating * 10) / 10.0}",
-                            fontSize = 15.sp,
-                            color = Color(0xffffffff),
+                            fontSize = 17.sp,
+                            color = Color(0xd8000000),
                             fontFamily = OutfitFontFamily(),
                             fontWeight = FontWeight.Medium,
                             maxLines = 2,
@@ -145,7 +143,7 @@ fun BookListItem(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = Color(0xffffffff),
+                            tint = Color(0xd8000000),
                         )
                     }
                 }

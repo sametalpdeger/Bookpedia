@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
@@ -59,31 +61,39 @@ fun BookDetailScreenRoot(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun BookDetailScreen(
+fun BookDetailScreen(
     state: BookDetailState,
     onAction: (BookDetailAction) -> Unit
 ) {
-    BlurredImageBg(
-        imageUrl = state.book?.imageUrl,
-        isFavorite = state.isFavorite,
-        onFavoriteClick = {
-            onAction(BookDetailAction.OnFavoriteClick)
-        },
-        onBackClick = {
-            onAction(BookDetailAction.OnBackClick)
-        },
-
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (state.book != null) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .widthIn(max = 800.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+        BlurredImageBg(
+            imageUrl = state.book?.imageUrl,
+            isFavorite = state.isFavorite,
+            onFavoriteClick = {
+                onAction(BookDetailAction.OnFavoriteClick)
+            },
+            onBackClick = {
+                onAction(BookDetailAction.OnBackClick)
+            },
+
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .widthIn(max = 800.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (state.book != null) {
                 BookDetailHeader(state)
                 BookDetailChipContent(state)
                 BookDetailDescription(state)
@@ -130,73 +140,59 @@ private fun BookDetailChipContent(
         verticalArrangement = Arrangement.Center,
     ) {
         state.book!!.averageRating?.let { rating ->
-            Box(
-                modifier = Modifier
-                    .padding(7.dp)
-            ) {
-                TitledContent(
-                    title = "Rating",
-                ) {
-                    BookChip {
-                        Text(
-                            text = "${round(rating * 10) / 10.0}",
-                            fontSize = 17.sp,
-                            color = Color.White,
-                            fontFamily = OutfitFontFamily(),
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                        )
 
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = Color.White,
-                        )
-                    }
+            TitledContent(
+                title = "Rating",
+            ) {
+                BookChip {
+                    Text(
+                        text = "${round(rating * 10) / 10.0}",
+                        fontSize = 19.sp,
+                        color = Color.White,
+                        fontFamily = OutfitFontFamily(),
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color.White,
+                    )
                 }
             }
         }
 
         state.book.numPages?.let { numPages ->
-            Box(
-                modifier = Modifier
-                    .padding(7.dp)
+            TitledContent(
+                title = "Pages",
             ) {
-                TitledContent(
-                    title = "Pages",
-                ) {
-                    BookChip {
-                        Text(
-                            text = "$numPages",
-                            fontSize = 17.sp,
-                            color = Color.White,
-                            fontFamily = OutfitFontFamily(),
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                        )
-                    }
+                BookChip {
+                    Text(
+                        text = "$numPages",
+                        fontSize = 19.sp,
+                        color = Color.White,
+                        fontFamily = OutfitFontFamily(),
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                    )
                 }
             }
         }
 
         if (state.book.firstPublishYear != null) {
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
+            TitledContent(
+                title = "Published",
             ) {
-                TitledContent(
-                    title = "Published",
-                ) {
-                    BookChip {
-                        Text(
-                            text = "${state.book.firstPublishYear}",
-                            fontSize = 17.sp,
-                            color = Color.White,
-                            fontFamily = OutfitFontFamily(),
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                        )
-                    }
+                BookChip {
+                    Text(
+                        text = "${state.book.firstPublishYear}",
+                        fontSize = 19.sp,
+                        color = Color.White,
+                        fontFamily = OutfitFontFamily(),
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                    )
                 }
             }
         }
@@ -204,32 +200,27 @@ private fun BookDetailChipContent(
         val languages = state.book.languages
 
         if (languages.isNotEmpty()) {
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
+            TitledContent(
+                title = "Languages",
             ) {
-                TitledContent(
-                    title = "Languages",
+                FlowRow(
+                    modifier = Modifier
+                        .wrapContentSize(Alignment.Center)
                 ) {
-                    FlowRow(
-                        modifier = Modifier
-                            .wrapContentSize(Alignment.Center)
-                    ) {
-                        languages.forEach { language ->
-                            Box(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                            ) {
-                                BookChip {
-                                    Text(
-                                        text = language.uppercase(),
-                                        fontSize = 17.sp,
-                                        color = Color.White,
-                                        fontFamily = OutfitFontFamily(),
-                                        fontWeight = FontWeight.Medium,
-                                        maxLines = 2,
-                                    )
-                                }
+                    languages.forEach { language ->
+                        Box(
+                            modifier = Modifier
+                                .padding(5.dp)
+                        ) {
+                            BookChip {
+                                Text(
+                                    text = language.uppercase(),
+                                    fontSize = 17.sp,
+                                    color = Color.White,
+                                    fontFamily = OutfitFontFamily(),
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 2,
+                                )
                             }
                         }
                     }
@@ -287,3 +278,4 @@ fun BookDetailDescription(
         }
     }
 }
+

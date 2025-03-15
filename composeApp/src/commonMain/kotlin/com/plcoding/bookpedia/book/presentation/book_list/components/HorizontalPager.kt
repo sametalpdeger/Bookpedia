@@ -4,14 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +32,6 @@ fun ColumnScope.HorizontalPagerContent(
     onAction: (BookListAction) -> Unit,
     searchResultsScrollState: LazyListState,
     favoritesScrollState: LazyListState
-
 ) {
     HorizontalPager(
         state = pagerState,
@@ -45,41 +45,36 @@ fun ColumnScope.HorizontalPagerContent(
         ) {
             when (pageIndex) {
                 0 -> {
-                    if (state.isLoading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    when {
+                        state.errorMessage != null -> {
+                            ErrorResult(
+                                onAction = onAction,
+                                errorMessage = state.errorMessage.asString()
+                            )
                         }
-                    } else {
-                        when {
-                            state.errorMessage != null -> {
-                                ErrorResult(
-                                    onAction = onAction,
-                                    errorMessage = state.errorMessage.asString()
-                                )
-                            }
 
-                            state.searchResults.isEmpty() -> {
-                                ErrorResult(
-                                    onAction = onAction,
-                                    errorMessage = "No results found"
-                                )
-                            }
+                        state.searchResults.isEmpty() -> {
+                            ErrorResult(
+                                onAction = onAction,
+                                errorMessage = "No results found"
+                            )
+                        }
 
-                            else -> {
-                                BookList(
-                                    books = state.searchResults,
-                                    onBookClick = {
-                                        onAction(BookListAction.onBookClick(it))
-                                    },
-                                    scrollState = searchResultsScrollState,
-                                )
-                            }
+                        else -> {
+                            BookList(
+                                books = state.searchResults,
+                                onBookClick = {
+                                    onAction(BookListAction.onBookClick(it))
+                                },
+                                scrollState = searchResultsScrollState,
+                                onLoadMore = {
+                                    onAction(BookListAction.onLoadMore)
+                                },
+                                isLoading = state.isLoading,
+                            )
                         }
                     }
+
                 }
 
                 1 -> {
@@ -94,7 +89,7 @@ fun ColumnScope.HorizontalPagerContent(
                                 .padding(16.dp)
                         )
                     } else {
-                        BookList(
+                        FavoriteBookList(
                             books = state.favoriteBooks,
                             onBookClick = {
                                 onAction(BookListAction.onBookClick(it))
@@ -116,8 +111,9 @@ private fun ErrorResult(
 ) {
     Column(
         modifier = Modifier
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -128,6 +124,7 @@ private fun ErrorResult(
             modifier = Modifier
                 .padding(16.dp)
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
                 onAction(BookListAction.onRefresh)

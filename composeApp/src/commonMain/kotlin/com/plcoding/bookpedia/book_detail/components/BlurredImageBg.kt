@@ -1,10 +1,11 @@
 package com.plcoding.bookpedia.book_detail.components
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -49,7 +50,6 @@ fun BlurredImageBg(
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
     onBackClick: () -> Unit,
-    content: @Composable () -> Unit
 ) {
     var imageLoadResult by remember {
         mutableStateOf<Result<Painter>?>(null)
@@ -71,7 +71,10 @@ fun BlurredImageBg(
     )
 
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .height(400.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -79,7 +82,6 @@ fun BlurredImageBg(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(0.3f)
                     .background(Color(0xff9b6fff))
             ) {
                 imageLoadResult?.getOrNull()?.let { painter ->
@@ -91,6 +93,9 @@ fun BlurredImageBg(
                             .fillMaxSize()
                             .blur(20.dp)
                     )
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawRect(color = Color.Black.copy(alpha = 0.5f))
+                    }
                 }
             }
 
@@ -121,17 +126,18 @@ fun BlurredImageBg(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+            Spacer(modifier = Modifier.height(200.dp))
             ElevatedCardContent(
                 imageLoadResult = imageLoadResult,
                 onFavoriteClick = onFavoriteClick,
                 painter = painter,
                 isFavorite = isFavorite
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            content()
         }
+
     }
+
+    Spacer(modifier = Modifier.height(50.dp))
 }
 
 @Composable
@@ -153,65 +159,59 @@ private fun ElevatedCardContent(
             ),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 15.dp
-        ),
-
-        ) {
-        AnimatedContent(
-            targetState = imageLoadResult,
-        ) { result ->
-            when (result) {
-                null -> CircularProgressIndicator()
-                else -> {
-                    Box {
-                        if (result.isSuccess) Image(
-                            painter = painter,
-                            contentDescription = null,
+        )
+    ) {
+        when (imageLoadResult) {
+            null -> CircularProgressIndicator()
+            else -> {
+                Box {
+                    if (imageLoadResult.isSuccess) Image(
+                        painter = painter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Transparent),
+                        contentScale = ContentScale.Crop,
+                    ) else Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xffddc7ff)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No image",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontFamily = OutfitFontFamily(),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Transparent),
-                            contentScale = ContentScale.Crop,
-                        ) else Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color(0xffddc7ff)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No image",
-                                color = Color.White,
-                                fontSize = 20.sp,
-                                fontFamily = OutfitFontFamily(),
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Transparent)
-                                    .align(Alignment.Center)
-                            )
-                        }
+                                .background(Color.Transparent)
+                                .align(Alignment.Center)
+                        )
+                    }
 
-                        IconButton(
-                            onClick = onFavoriteClick,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .background(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(
-                                            Color(0xff9b6fff),
-                                            Color.Transparent,
-                                        ),
-                                        radius = 70f
-                                    )
+                    IconButton(
+                        onClick = onFavoriteClick,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        Color(0xff9b6fff),
+                                        Color.Transparent,
+                                    ),
+                                    radius = 70f
                                 )
-                        ) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                                tint = Color.White,
                             )
-                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            tint = Color.White,
+                        )
                     }
                 }
             }
         }
-
     }
 }

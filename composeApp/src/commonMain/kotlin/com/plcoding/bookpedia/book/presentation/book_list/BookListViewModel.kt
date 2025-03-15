@@ -29,8 +29,9 @@ class BookListViewModel(
     private val _state = MutableStateFlow(BookListState())
     val state = _state
         .onStart {
+            observeSearchQuery()
             if (cachedBooks.isEmpty()) {
-                observerSearchQuery()
+                observerSearchParams()
             }
             observeFavoriteBooks()
         }
@@ -44,18 +45,50 @@ class BookListViewModel(
     private var searchJob: Job? = null
     private var favoriteJob: Job? = null
 
-    private fun observerSearchQuery() {
-        state
-            .map { it.searchQuery }
+    private fun onLoadMore() {
+        _state.update {
+            it.copy(
+                searchParams = it.searchParams.copy(
+                    offset = it.searchParams.offset + 1
+                )
+            )
+        }
+    }
+
+    private fun observeSearchQuery() {
+        _state
+            .map { it.searchParams.query }
             .distinctUntilChanged()
             .debounce(500L)
-            .onEach { query ->
+            .onEach {
+                println("Search query: changed to $it")
+                _state.update {
+                    it.copy(
+                        searchParams = it.searchParams.copy(
+                            query = it.searchParams.query,
+                            offset = 1,
+                        ),
+                    )
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    private fun observerSearchParams() {
+        state
+            .map { it.searchParams }
+            .distinctUntilChanged()
+            .debounce(500L)
+            .onEach { params ->
+                val (query, limit, offset) = params
+
                 when {
                     query.isBlank() -> {
+
                         _state.update {
+                            it.searchResults.addAll(0, cachedBooks)
+
                             it.copy(
                                 errorMessage = null,
-                                searchResults = cachedBooks,
                             )
                         }
                     }
@@ -63,7 +96,7 @@ class BookListViewModel(
 
                     query.length > 2 -> {
                         searchJob?.cancel()
-                        searchJob = searchBooks(query)
+                        searchJob = searchBooks(query, limit, offset)
                     }
                 }
             }.launchIn(viewModelScope)
@@ -74,52 +107,54 @@ class BookListViewModel(
         favoriteJob = bookRepository
             .getFavoriteBooks()
             .onEach { books ->
-                _state.update {
-                    it.copy(
-                        favoriteBooks = books
-                    )
-                }
+                _state.value.favoriteBooks.addAll(books)
             }
             .launchIn(viewModelScope)
     }
 
-    private fun searchBooks(query: String) = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                isLoading = true,
-            )
+    private fun searchBooks(query: String, limit: Int = 10, offset: Int = 0) =
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                )
+            }
+
+            bookRepository
+                .searchBooks(query, limit, offset)
+                .onSuccess { books ->
+                    _state.update {
+                        if (offset != 1) it.searchResults.addAll(books) else {
+                            it.searchResults.clear()
+                            it.searchResults.addAll(books)
+                        }
+
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                }
+                .onError { error ->
+                    _state.update {
+                        it.searchResults.clear()
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.toUiText(),
+                        )
+                    }
+                }
+
         }
-
-        bookRepository
-            .searchBooks(query)
-            .onSuccess { books ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        searchResults = books,
-                    )
-                }
-            }
-            .onError { error ->
-                _state.update {
-                    it.copy(
-                        searchResults = emptyList(),
-                        isLoading = false,
-                        errorMessage = error.toUiText(),
-                    )
-                }
-            }
-
-    }
 
     fun onAction(action: BookListAction) {
         when (action) {
             is BookListAction.onRefresh -> {
                 viewModelScope.launch {
-                    val query = _state.value.searchQuery
-                    if (query.length > 2) {
+                    val searchParams = _state.value.searchParams
+                    if (searchParams.query.length > 2) {
                         searchJob?.cancel()
-                        searchJob = searchBooks(query)
+                        searchJob =
+                            searchBooks(searchParams.query, searchParams.limit, searchParams.offset)
                     }
                 }
             }
@@ -128,10 +163,16 @@ class BookListViewModel(
 
             }
 
+            is BookListAction.onLoadMore -> {
+                onLoadMore()
+            }
+
             is BookListAction.onSearchQueryChanged -> {
                 _state.update {
                     it.copy(
-                        searchQuery = action.query,
+                        searchParams = it.searchParams.copy(
+                            query = action.query,
+                        )
                     )
                 }
             }

@@ -19,9 +19,9 @@ class DefaultBookRepository(
     private val remoteBookDataSource: KtorRemoteBookDataSource,
     private val favoriteBookDao: FavoriteBookDao,
 ) : BookRepository {
-    override suspend fun searchBooks(query: String): Result<List<Book>, DataError.Remote> {
+    override suspend fun searchBooks(query: String, limit: Int?, offset: Int?): Result<List<Book>, DataError.Remote> {
         return remoteBookDataSource
-            .searchBooks(query)
+            .searchBooks(query, limit, offset)
             .map { dto ->
                 dto.results.map { it.toBook() }
             }

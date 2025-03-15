@@ -8,7 +8,7 @@ const val IMAGE_URL_START_URL = "https://covers.openlibrary.org/b"
 
 fun SearchedBookDTO.toBook(): Book {
     return Book(
-        id = id.substringAfterLast("/"),
+        id = id.substringAfterLast("/") + System.currentTimeMillis(),
         title = title,
         imageUrl =
         if (coverKey != null) "$IMAGE_URL_START_URL/id/${coverKey}-L.jpg"
@@ -42,7 +42,7 @@ fun Book.toBookEntity(): BookEntity {
 
 fun BookEntity.toBook(): Book {
     return Book(
-        id = id,
+        id = id + System.currentTimeMillis(),
         title = title,
         imageUrl = imageUrl,
         authors = authors,

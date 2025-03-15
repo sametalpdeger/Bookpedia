@@ -9,6 +9,7 @@ interface RemoteBookDataSource {
     suspend fun searchBooks(
         query: String,
         resultLimit: Int? = null,
+        offset: Int? = null,
     ): Result<SearchResponseDTO, DataError.Remote>
 
     suspend fun getBookDetails(bookID: String): Result<BookWorkDto, DataError.Remote>

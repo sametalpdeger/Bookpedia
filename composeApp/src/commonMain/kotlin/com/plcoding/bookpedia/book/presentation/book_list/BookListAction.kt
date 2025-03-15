@@ -7,4 +7,5 @@ sealed interface BookListAction {
     data object onRefresh: BookListAction
     data class onBookClick(val book: Book): BookListAction
     data class onTabChanged(val index: Int): BookListAction
+    data object onLoadMore: BookListAction
 }

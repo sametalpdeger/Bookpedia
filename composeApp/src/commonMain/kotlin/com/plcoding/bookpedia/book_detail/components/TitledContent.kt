@@ -20,10 +20,9 @@ fun TitledContent(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(vertical = 20.dp),
+        modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
-
     ) {
         Text(
             text = title,

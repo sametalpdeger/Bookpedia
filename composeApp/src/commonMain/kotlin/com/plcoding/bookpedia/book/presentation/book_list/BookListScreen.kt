@@ -89,7 +89,7 @@ fun BookListScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         BookSearchBar(
-            searchQuery = state.searchQuery,
+            searchQuery = state.searchParams.query,
             onSearchQueryChanged = {
                 onAction(BookListAction.onSearchQueryChanged(it))
             },
