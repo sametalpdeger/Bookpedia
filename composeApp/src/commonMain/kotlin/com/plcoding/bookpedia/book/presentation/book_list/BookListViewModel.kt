@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// presentation -> domain <- data
 @OptIn(FlowPreview::class)
 class BookListViewModel(
     private val bookRepository: BookRepository,
@@ -59,16 +58,17 @@ class BookListViewModel(
         _state
             .map { it.searchParams.query }
             .distinctUntilChanged()
-            .debounce(500L)
-            .onEach {
-                println("Search query: changed to $it")
-                _state.update {
-                    it.copy(
-                        searchParams = it.searchParams.copy(
-                            query = it.searchParams.query,
-                            offset = 1,
-                        ),
-                    )
+            .debounce(50L)
+            .onEach { query ->
+                if (query.isBlank()) {
+                    _state.update {
+                        it.searchResults.addAll(0, cachedBooks)
+                        it.copy(
+                            errorMessage = null,
+                            isLoading = false,
+                            isWholeListLoading = false,
+                        )
+                    }
                 }
             }.launchIn(viewModelScope)
     }
@@ -77,24 +77,18 @@ class BookListViewModel(
         state
             .map { it.searchParams }
             .distinctUntilChanged()
-            .debounce(500L)
+            .debounce(50L)
             .onEach { params ->
                 val (query, limit, offset) = params
 
                 when {
-                    query.isBlank() -> {
-
+                    query.length > 2 -> {
                         _state.update {
-                            it.searchResults.addAll(0, cachedBooks)
-
                             it.copy(
-                                errorMessage = null,
+                                isLoading = true,
+                                isWholeListLoading = offset == 0,
                             )
                         }
-                    }
-
-
-                    query.length > 2 -> {
                         searchJob?.cancel()
                         searchJob = searchBooks(query, limit, offset)
                     }
@@ -112,24 +106,19 @@ class BookListViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun searchBooks(query: String, limit: Int = 10, offset: Int = 0) =
+    private fun searchBooks(query: String, limit: Int = 10, offset: Int = 0): Job =
         viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    isLoading = true,
-                )
-            }
-
             bookRepository
                 .searchBooks(query, limit, offset)
                 .onSuccess { books ->
                     _state.update {
-                        if (offset != 1) it.searchResults.addAll(books) else {
+                        if (offset != 0) it.searchResults.addAll(books) else {
                             it.searchResults.clear()
                             it.searchResults.addAll(books)
                         }
 
                         it.copy(
+                            isWholeListLoading = false,
                             isLoading = false,
                         )
                     }
@@ -139,11 +128,12 @@ class BookListViewModel(
                         it.searchResults.clear()
                         it.copy(
                             isLoading = false,
+                            isWholeListLoading = false,
                             errorMessage = error.toUiText(),
                         )
+
                     }
                 }
-
         }
 
     fun onAction(action: BookListAction) {
@@ -172,6 +162,7 @@ class BookListViewModel(
                     it.copy(
                         searchParams = it.searchParams.copy(
                             query = action.query,
+                            offset = 0,
                         )
                     )
                 }

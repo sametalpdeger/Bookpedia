@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,14 +54,18 @@ fun ColumnScope.HorizontalPagerContent(
                             )
                         }
 
-                        state.searchResults.isEmpty() -> {
-                            ErrorResult(
-                                onAction = onAction,
-                                errorMessage = "No results found"
-                            )
+                        state.isWholeListLoading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
 
-                        else -> {
+                        (state.isLoading) || state.searchResults.isNotEmpty() -> {
                             BookList(
                                 books = state.searchResults,
                                 onBookClick = {
@@ -73,6 +78,15 @@ fun ColumnScope.HorizontalPagerContent(
                                 isLoading = state.isLoading,
                             )
                         }
+
+                        state.searchResults.isEmpty() -> {
+                            ErrorResult(
+                                onAction = onAction,
+                                errorMessage = "No results found"
+                            )
+                        }
+
+
                     }
 
                 }

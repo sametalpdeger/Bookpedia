@@ -12,4 +12,5 @@ data class Book(
     val ratingCount: Int?,
     val numPages: Int?,
     val numEditions: Int,
+    val uniqueId: String,
 )

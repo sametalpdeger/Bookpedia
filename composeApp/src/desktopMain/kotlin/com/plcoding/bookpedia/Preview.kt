@@ -28,6 +28,7 @@ fun BookDetailScreenPreview() {
                 ratingCount = 100,
                 numEditions = 100,
                 numPages = 100,
+                uniqueId = "1",
             ),
             isFavorite = true,
             isLoading = false,

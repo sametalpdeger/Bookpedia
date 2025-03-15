@@ -8,7 +8,7 @@ const val IMAGE_URL_START_URL = "https://covers.openlibrary.org/b"
 
 fun SearchedBookDTO.toBook(): Book {
     return Book(
-        id = id.substringAfterLast("/") + System.currentTimeMillis(),
+        id = id.substringAfterLast("/"),
         title = title,
         imageUrl =
         if (coverKey != null) "$IMAGE_URL_START_URL/id/${coverKey}-L.jpg"
@@ -21,6 +21,7 @@ fun SearchedBookDTO.toBook(): Book {
         ratingCount = ratingCount,
         numPages = numPagesMedian,
         numEditions = numEditions ?: 0,
+        uniqueId = "${System.currentTimeMillis()}-$id",
     )
 }
 
@@ -42,7 +43,7 @@ fun Book.toBookEntity(): BookEntity {
 
 fun BookEntity.toBook(): Book {
     return Book(
-        id = id + System.currentTimeMillis(),
+        id = id,
         title = title,
         imageUrl = imageUrl,
         authors = authors,
@@ -53,5 +54,6 @@ fun BookEntity.toBook(): Book {
         ratingCount = ratingCount,
         numEditions = numEditions,
         numPages = numPagesMedian,
+        uniqueId = "${System.currentTimeMillis()}-$id",
     )
 }

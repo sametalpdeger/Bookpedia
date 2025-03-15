@@ -32,7 +32,7 @@ fun FavoriteBookList(
     ) {
         items(
             books,
-            key = { it.id + it.title },
+            key = { it.uniqueId },
         ) { book ->
             BookListItem(
                 book = book,
