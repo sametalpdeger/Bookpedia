@@ -101,6 +101,7 @@ class BookListViewModel(
         favoriteJob = bookRepository
             .getFavoriteBooks()
             .onEach { books ->
+                _state.value.favoriteBooks.clear()
                 _state.value.favoriteBooks.addAll(books)
             }
             .launchIn(viewModelScope)

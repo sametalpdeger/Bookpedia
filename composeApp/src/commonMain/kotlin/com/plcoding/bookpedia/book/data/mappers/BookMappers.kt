@@ -38,6 +38,7 @@ fun Book.toBookEntity(): BookEntity {
         ratingCount = ratingCount,
         numPagesMedian = numPages,
         numEditions = numEditions,
+        uniqueId = uniqueId,
     )
 }
 
@@ -54,6 +55,6 @@ fun BookEntity.toBook(): Book {
         ratingCount = ratingCount,
         numEditions = numEditions,
         numPages = numPagesMedian,
-        uniqueId = "${System.currentTimeMillis()}-$id",
+        uniqueId = uniqueId,
     )
 }

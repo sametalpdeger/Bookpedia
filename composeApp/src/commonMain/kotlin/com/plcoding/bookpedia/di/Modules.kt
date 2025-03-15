@@ -12,7 +12,7 @@ import com.plcoding.bookpedia.book.data.repository.DefaultBookRepository
 import org.koin.core.module.dsl.viewModelOf
 import com.plcoding.bookpedia.book.presentation.book_list.BookListViewModel
 import com.plcoding.bookpedia.book.presentation.book_list.SharedSelectedBookViewModel
-import com.plcoding.bookpedia.book_detail.BookDetailViewModel
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import org.koin.core.module.Module
 import com.plcoding.bookpedia.book.data.database.DatabaseFactory
 import com.plcoding.bookpedia.book.data.database.FavoriteBookDatabase

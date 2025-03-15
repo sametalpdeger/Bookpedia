@@ -60,6 +60,7 @@ class DefaultBookRepository(
 
     override suspend fun markAsFavorite(book: Book): EmptyResult<DataError.Local> {
         val result = try {
+            println("markAsFavorite: Book $book")
             favoriteBookDao.upsert(book.toBookEntity())
             Result.Success(Unit)
         } catch (e: SQLiteException) {
@@ -73,9 +74,11 @@ class DefaultBookRepository(
 
     override suspend fun deleteFromFavorites(id: String): EmptyResult<DataError.Local> {
         val result = try {
+            println("deleteFromFavorites: Book $id")
             favoriteBookDao.deleteFavoriteBook(id)
             Result.Success(Unit)
         } catch (e: Exception) {
+            println("deleteFromFavorites: Error $e")
             Result.Error(DataError.Local.UNKNOWN)
         }
 

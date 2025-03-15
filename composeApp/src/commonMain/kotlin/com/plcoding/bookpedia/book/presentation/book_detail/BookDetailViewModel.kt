@@ -1,4 +1,4 @@
-package com.plcoding.bookpedia.book_detail
+package com.plcoding.bookpedia.book.presentation.book_detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,6 +8,7 @@ import com.plcoding.bookpedia.app.Route
 import com.plcoding.bookpedia.book.domain.BookRepository
 import com.plcoding.bookpedia.core.domain.onError
 import com.plcoding.bookpedia.core.domain.onSuccess
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +24,7 @@ class BookDetailViewModel(
 ) : ViewModel() {
     private val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
     private val _state = MutableStateFlow(BookDetailState())
+    private var favoriteJob: Job? = null
     val state = _state
         .onStart {
             fetchBookDescription()
@@ -38,15 +40,17 @@ class BookDetailViewModel(
         when (action) {
             is BookDetailAction.OnBackClick -> {}
             is BookDetailAction.OnFavoriteClick -> {
-                viewModelScope.launch {
+                if (favoriteJob?.isActive == true || state.value.isLoading) return
+
+                favoriteJob = viewModelScope.launch {
                     if (state.value.isFavorite) {
                         bookRepository.deleteFromFavorites(bookId)
-                    } else {
-                        state.value.book?.let { book ->
-                            bookRepository.markAsFavorite(book)
-                        }
+                    } else state.value.book?.let { book ->
+                        bookRepository.markAsFavorite(book)
+
                     }
                 }
+
             }
 
             is BookDetailAction.OnSelectedBookChange -> {

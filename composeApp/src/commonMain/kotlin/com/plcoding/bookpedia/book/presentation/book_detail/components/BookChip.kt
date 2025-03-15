@@ -1,4 +1,4 @@
-package com.plcoding.bookpedia.book_detail.components
+package com.plcoding.bookpedia.book.presentation.book_detail.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

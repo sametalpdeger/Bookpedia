@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalLayoutApi::class)
 
-package com.plcoding.bookpedia.book_detail
+package com.plcoding.bookpedia.book.presentation.book_detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,9 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.plcoding.bookpedia.book_detail.components.BlurredImageBg
-import com.plcoding.bookpedia.book_detail.components.BookChip
-import com.plcoding.bookpedia.book_detail.components.TitledContent
+import com.plcoding.bookpedia.book.presentation.book_detail.components.BlurredImageBg
+import com.plcoding.bookpedia.book.presentation.book_detail.components.BookChip
+import com.plcoding.bookpedia.book.presentation.book_detail.components.TitledContent
 import com.plcoding.bookpedia.core.presentation.OutfitFontFamily
 import kotlin.math.round
 

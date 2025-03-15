@@ -3,8 +3,8 @@ package com.plcoding.bookpedia
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import com.plcoding.bookpedia.book.domain.Book
-import com.plcoding.bookpedia.book_detail.BookDetailScreen
-import com.plcoding.bookpedia.book_detail.BookDetailState
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailScreen
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailState
 
 @Preview
 @Composable

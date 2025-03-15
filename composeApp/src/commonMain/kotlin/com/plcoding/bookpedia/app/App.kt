@@ -28,9 +28,9 @@ import androidx.navigation.navigation
 import com.plcoding.bookpedia.book.presentation.book_list.BookListScreenRoot
 import com.plcoding.bookpedia.book.presentation.book_list.BookListViewModel
 import com.plcoding.bookpedia.book.presentation.book_list.SharedSelectedBookViewModel
-import com.plcoding.bookpedia.book_detail.BookDetailAction
-import com.plcoding.bookpedia.book_detail.BookDetailScreenRoot
-import com.plcoding.bookpedia.book_detail.BookDetailViewModel
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailAction
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailScreenRoot
+import com.plcoding.bookpedia.book.presentation.book_detail.BookDetailViewModel
 import com.plcoding.bookpedia.core.presentation.AppTheme
 import com.plcoding.bookpedia.core.presentation.OutfitFontFamily
 import com.plcoding.bookpedia.core.presentation.ScreenSize
